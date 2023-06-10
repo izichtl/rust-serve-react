@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Add React in One Minute</title>
+</head>
+
+<body>
+  <div id="root"></div>
+
+
+  <!-- Load React. -->
+  <!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+
+  <script type="text/babel">
+    'use strict';
+  const Article = () => {
+    const customStyles = {
+    backgroundColor: 'whitesmoke',
+    color: 'black',
+    fontSize: '20px',
+  };
+    return (
+    <article>
+      <h1>One file ReactJS served with Rust WebServer!</h1>
+      <p>
+        Hi everyone! are you fine? Is friday night and me here writing code!
+        This is a Rust WebServer, with two responses
+      </p>
+      <p>
+        "/" = 200 = return Index.html
+      </p>
+      <p>
+        !== of "/" = 404 = return 404.html
+      </p>
+      <p>
+        The index.html is one file reactJS app, at time just text rendering!.
+      </p>
+      <h2>Rust WebServer</h2>
+      <pre>
+        <code style={customStyles}>
+          {`
+            use std::fs;
+            use std::net::TcpListener;
+            use std::net::TcpStream;
+            use std::io::prelude::*;
+
+            fn handle_connection(mut stream: TcpStream) {
+                let mut buffer = [0; 1024];
+                stream.read(&mut buffer).unwrap();
+            
+                let get = b"GET / HTTP/1.1\\r\\n";
+            
+                let (status_line, filename) = 
+                    if buffer.starts_with(get) {
+                        ("HTTP/1.1 200 OK", "index.html")
+                    } else {
+                        ("HTTP/1.1 404 NOT FOUND", "404.html")
+                    };
+                  
+                let contents = fs::read_to_string(filename).unwrap();
+                let response = format!(
+                    "{}\\r\\nContent-Length: {}\\r\\\\n\\r\\n{}",
+                    status_line,
+                    contents.len(),
+                    contents
+                );
+                stream.write(response.as_bytes()).unwrap();
+                stream.flush().unwrap();
+            }
+            fn main() {
+                let _listener = TcpListener::bind("127.0.0.1:8000").unwrap();
+                for stream in _listner.incoming() {
+                    let stream  = stream.unwrap();
+                    handle_connection(stream);
+                }
+            }
+          `}
+        </code>
+      </pre>
+      <h2>One File ReactJS</h2>
+      <pre>
+        <code style={customStyles}>
+          {
+            `
+          \<!DOCTYPE html\>
+          \<html\>
+
+          \<head\>
+            \<meta charset='UTF-8' /\>
+            \<title\>One File ReactJS\</title\>
+          \</head\>
+
+          \<body\>
+            \<div id='root'\>\</div\>
+            \<script src='https://unpkg.com/react@18/umd/react.development.js' crossorigin\>\</script\>
+            \<script src='https://unpkg.com/react-dom@18/umd/react-dom.development.js' crossorigin\>\</script\>
+            \<script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'\>\</script\>
+            \<script type='text/babel'\>
+              'use strict';
+              const root = ReactDOM.createRoot(document.getElementById('root'));
+              function App() {
+                const incrementarContador = () =\> {
+                  setContador(contador + 1);
+                };
+                return (
+                  \<h1\>ReactApp\</h1\>
+                );
+              }
+            
+              root.render(\<App /\>)
+            \</script\>
+          \</body\>
+              
+          \</html\>
+          `}
+        </code>
+      </pre>
+
+    </article>
+  );
+};
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    function App() {
+      const [contador, setContador] = React.useState(0);
+
+      // fetch('/src/main.rs')
+      // .then(response => {
+      //   console.log(response)
+      //   return response.json()
+      // })
+      // .then(code => {
+      //   console.log(code)
+      //   const iframe = document.getElementById('codeFrame');
+      //   const doc = iframe.contentDocument || iframe.contentWindow.document;
+      //   doc.body.textContent = code;
+      // })
+      // .catch(error => {
+      //   console.error('Error fetching main.rs:', error);
+      // });
+      const incrementarContador = () => {
+        setContador(contador + 1);
+      };
+
+      return (
+        <Article />
+      );
+    }
+
+    root.render(<App />)
+  </script>
+</body>
+
+</html>
